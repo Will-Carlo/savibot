@@ -1,8 +1,8 @@
-token = 'bigdateros'
+token = 'savin-toke-whap-DSANK32NJ32DONA'
 
-whatsapp_token = 'ingresa whatsapp token'
+whatsapp_token = 'EAAT5ZBUichy4BO1el9CwKyvWWV7tZBicGqspkDU2RrTmhjwcRly0hrwycqfHTtcikkyShuzdBxAdyqfZCB8tsf7aZAomH1Qltsu8fYCwSoTgjGplA7xQ6R8iSCgcEHqoz9OtOMDcRFVsTryc6iZBzK7pw7s4Q7ASR8iZC3zWiUPmgxfly316BjhtDHpTJp'
 
-whatsapp_url = 'ingresa whatsapp url'
+whatsapp_url = 'https://graph.facebook.com/v18.0/197064523494479/messages'
 
 stickers = {
     "poyo_feliz": 984778742532668,

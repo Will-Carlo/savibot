@@ -1,12 +1,13 @@
 from flask import Flask, request
 import sett 
-import services
+import funcWhap
+import chatbot
 
 app = Flask(__name__)
 
 @app.route('/bienvenido', methods=['GET'])
 def  bienvenido():
-    return 'Hola mundo bigdateros, desde Flask'
+    return 'Hola mundo.'
 
 @app.route('/webhook', methods=['GET'])
 def verificar_token():
@@ -29,13 +30,14 @@ def recibir_mensajes():
         changes = entry['changes'][0]
         value = changes['value']
         message = value['messages'][0]
-        number = services.replace_start(message['from'])
+        number = funcWhap.replace_start(message['from'])
         messageId = message['id']
         contacts = value['contacts'][0]
         name = contacts['profile']['name']
-        text = services.obtener_Mensaje_whatsapp(message)
+        text = funcWhap.obtener_Mensaje_whatsapp(message)
 
-        services.administrar_chatbot(text, number,messageId,name)
+        mi_bot = chatbot(text, number,messageId,name)
+        mi_bot.start()
         return 'enviado'
 
     except Exception as e:
