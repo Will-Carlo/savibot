@@ -8,6 +8,8 @@ class ChatBot:
     listCity = ["La Paz", "El Alto", "Cochabamba", "Santa Cruz", "Tarija", "Sucre", "Oruro", "Potosí"]
     listArea = ["Impresoras 3D", "Fotocopiadoras", "Sublimación", "Cortadora láser", "Computadoras", "Bioseguridad", "Impresoras", "Papel", "Novedades", "Otros"]
     listMenu = ["📦 Productos y precios", "🗺️ Dirección", "💰 Promociones y ofertas", "📖 Ver catálogos", "🙋🏻‍♂️ Chatear con un asesor"]
+    listAreaSupport = ["🖥️ Impresoras 3D", "🗺️ Máquinas láser", "💰 Computadoras", "📖 Sublimación", "🙋🏻‍♂️ Atención general"]
+    
     
     def __init__(self, _text, _number, _messageId, _name):
         self.text = _text
@@ -79,8 +81,14 @@ class ChatBot:
         # FLUJO DE 🗺️ DIRECCIÓN
         elif text in self.listCity:
             self.addressForCity()
-            
-            
+        
+        # FLUJO DE 💰 Promociones y ofertas
+        
+        # FLUJO DE 📖 Ver catálogos
+        
+        # FLUJO DE 🙋🏻‍♂️ Chatear con un asesor
+        
+        
         else:
             self.errorMessage()
 
@@ -141,8 +149,7 @@ class ChatBot:
     
     def chatWithAnAdvisor(self):
         self.sendSimpleText("Muy bien ¿En qué área necesitas la atención al cliente? 🤔")
-        options = ["🖥️ Impresoras 3D", "🗺️ Máquinas láser", "💰 Computadoras", "📖 Sublimación", "🙋🏻‍♂️ Atención general"]
-        self.sendMenuOptions("Selecciona un área 👇🏻", options)
+        self.sendMenuOptions("Selecciona un área 👇🏻", self.listAreaSupport)
         
     # FUNCIONES DE PRODUCTOS POR ÁREA
     
@@ -187,38 +194,44 @@ class ChatBot:
             self.sendSimpleText(address1)
             self.sendSimpleText(address2)
         elif "Cochabamba" == self.text:
-            address = "🏢 Calle Sucre # 882 (Casi esquina Oquendo)"
-            phone = "📲 72030102"
-            maps = "📌 https://maps.app.goo.gl/6MfeLnrtaiAk9p6y9"
+            address1 = "🏢 Calle Sucre # 882 (Casi esquina Oquendo)"
+            address1 += "\n📲 72030102"
+            address1 += "\n📌 https://maps.app.goo.gl/6MfeLnrtaiAk9p6y9"
             
-            self.sendSimpleText(address)
-            self.sendSimpleText(phone)
-            self.sendSimpleText(maps)
-            
-            self.sendContact(phone)
-            self.sendUrl(maps)
+            self.sendSimpleText(address1)
         elif "Santa Cruz" == self.text:
-            address = "🏢 Avenida Centenario # 113 casi esquina Palermo (entre primer y segundo anillo)"
-            phone = "📲 72030103"
-            maps = "📌 https://maps.app.goo.gl/1xw1r9zfBwv1pQJK6"
-        elif "Tarija" == self.text:
-            address = "🏢 Calle Alejandro del Carpio # 258 entre Suipacha y Méndez (Zona Las Panosas)"
-            phone = "📲 72030105"
-            maps = "📌 https://maps.app.goo.gl/rHxKVwKALUQev44QA"
-        elif "Sucre" == self.text:
-            address = "🏢 Calle Regimiento Campos # 174 Esquina Ricardo Andrade (Frente a la Facultad Técnica)"
-            phone = "📲 72030104"
-            maps = "📌 https://maps.app.goo.gl/bcK8XhSmjCk9daXt7"
-        elif "Oruro" == self.text:
-            address = "🏢 Calle Potosí # 5507 Esquina Montecinos (Diagonal al Col. Juan Misael Saracho)"
-            phone = "📲 72030106"
-            maps = "📌 https://maps.app.goo.gl/5ARt9qRxZoRzadc89"
-        elif "Potosí" == self.text:
-            address = "🏢 Avenida Prado San Clemente # 29 entre las calles Camargo y 13 de Mayo"
-            phone = "📲 68868684"
-            maps = "📌 https://maps.app.goo.gl/mzG5tcuqNpD9NcLDA"
+            address1 = "🏢 Avenida Centenario # 113 casi esquina Palermo (entre primer y segundo anillo)"
+            address1 += "\n📲 72030103"
+            address1 += "\n📌 https://maps.app.goo.gl/1xw1r9zfBwv1pQJK6"
             
+            self.sendSimpleText(address1)
+        elif "Tarija" == self.text:
+            address1 = "🏢 Calle Alejandro del Carpio # 258 entre Suipacha y Méndez (Zona Las Panosas)"
+            address1 += "\n📲 72030105"
+            address1 += "\n📌 https://maps.app.goo.gl/rHxKVwKALUQev44QA"
+            
+            self.sendSimpleText(address1)
+        elif "Sucre" == self.text:
+            address1 = "🏢 Calle Regimiento Campos # 174 Esquina Ricardo Andrade (Frente a la Facultad Técnica)"
+            address1 += "\n📲 72030104"
+            address1 += "\n📌 https://maps.app.goo.gl/bcK8XhSmjCk9daXt7"
+            
+            self.sendSimpleText(address1)
+        elif "Oruro" == self.text:
+            address1 = "🏢 Calle Potosí # 5507 Esquina Montecinos (Diagonal al Col. Juan Misael Saracho)"
+            address1 += "\n📲 72030106"
+            address1 += "\n📌 https://maps.app.goo.gl/5ARt9qRxZoRzadc89"
+            
+            self.sendSimpleText(address1)
+        elif "Potosí" == self.text:
+            address1 = "🏢 Avenida Prado San Clemente # 29 entre las calles Camargo y 13 de Mayo"
+            address1 += "\n📲 68868684"
+            address1 += "\n📌 https://maps.app.goo.gl/mzG5tcuqNpD9NcLDA"
+            
+            self.sendSimpleText(address1)
         
+        self.menuPreEnd()
+
         
     # FUNCIONES PARA ENVIAR MENSAJES
     
