@@ -1,7 +1,7 @@
 import requests
 import sett
 import json
-
+import time
 
 def obtener_Mensaje_whatsapp(message):
     if 'type' not in message :
@@ -19,8 +19,7 @@ def obtener_Mensaje_whatsapp(message):
         text = message['interactive']['button_reply']['title']
     else:
         text = 'mensaje no procesado'
-    
-    
+
     return text
 
 def enviar_Mensaje_whatsapp(data):
@@ -211,9 +210,75 @@ def markRead_Message(messageId):
     )
     return data
 
-
 def replace_start(s):
     if s.startswith("591"):
         return "591" + s[3:]
     else:
         return s
+
+# def replyLocation(number, LOCATION_LATITUDE, LOCATION_LONGITUDE, LOCATION_NAME, LOCATION_ADDRESS):
+#     data = json.dumps(
+#         {
+#             "messaging_product": "whatsapp",
+#             "recipient_type": "individual",
+#             "to": number,
+#             "type": "location",
+#             "location": {
+#                 "latitude": LOCATION_LATITUDE,
+#                 "longitude": LOCATION_LONGITUDE,
+#                 "name": LOCATION_NAME,
+#                 "address": LOCATION_ADDRESS,
+#             }
+#         }
+#     )
+#     return data
+
+
+def replyContact_Message(number):
+    data = json.dumps(
+        {
+            "messaging_product": "whatsapp",
+            "recipient_type": "individual",
+            "to": number,
+            "type": "contacts",
+            "contacts":[{
+                "addresses":[{
+                "city":"CONTACT_CITY",
+                "country":"CONTACT_COUNTRY",
+                "country_code":"CONTACT_COUNTRY_CODE",
+                "state":"CONTACT_STATE",
+                "street":"CONTACT_STREET",
+                "type":"HOME or WORK",
+                "zip":"CONTACT_ZIP"
+                }],
+                "birthday":"CONTACT_BIRTHDAY",
+                "emails":[{
+                "email":"CONTACT_EMAIL",
+                "type":"WORK or HOME"
+                }],
+                "name":{
+                "formatted_name":"CONTACT_FORMATTED_NAME",
+                "first_name":"CONTACT_FIRST_NAME",
+                "last_name":"CONTACT_LAST_NAME",
+                "middle_name":"CONTACT_MIDDLE_NAME",
+                "suffix":"CONTACT_SUFFIX",
+                "prefix":"CONTACT_PREFIX"
+                },
+                "org":{
+                "company":"CONTACT_ORG_COMPANY",
+                "department":"CONTACT_ORG_DEPARTMENT",
+                "title":"CONTACT_ORG_TITLE"
+                },
+                "phones":[{
+                "phone": number,
+                "wa_id":"CONTACT_WA_ID",
+                "type":"HOME or WORK>"
+                }],
+                "urls":[{
+                "url":"CONTACT_URL",
+                "type":"HOME or WORK"
+                }]
+            }]
+        }
+    )
+    return data

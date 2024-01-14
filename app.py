@@ -1,7 +1,8 @@
 from flask import Flask, request
+from chatbot import ChatBot
 import sett 
 import funcWhap
-import chatbot
+
 
 app = Flask(__name__)
 
@@ -24,6 +25,7 @@ def verificar_token():
     
 @app.route('/webhook', methods=['POST'])
 def recibir_mensajes():
+
     try:
         body = request.get_json()
         entry = body['entry'][0]
@@ -35,9 +37,12 @@ def recibir_mensajes():
         contacts = value['contacts'][0]
         name = contacts['profile']['name']
         text = funcWhap.obtener_Mensaje_whatsapp(message)
-
-        mi_bot = chatbot(text, number,messageId,name)
+        print(text, number, messageId, name)
+        # funcWhap.administrar_chatbot(text, number,messageId,name)
+    
+        mi_bot = ChatBot(text, number, messageId, name)
         mi_bot.start()
+        
         return 'enviado'
 
     except Exception as e:

@@ -2,9 +2,12 @@ import sett
 import time
 import funcWhap
 
-class chatbot:
+class ChatBot:
     
     list = []
+    listCity = ["La Paz", "El Alto", "Cochabamba", "Santa Cruz", "Tarija", "Sucre", "Oruro", "Potosí"]
+    listArea = ["Impresoras 3D", "Fotocopiadoras", "Sublimación", "Cortadora láser", "Computadoras", "Bioseguridad", "Impresoras", "Papel", "Novedades", "Otros"]
+    listMenu = ["📦 Productos y precios", "🗺️ Dirección", "💰 Promociones y ofertas", "📖 Ver catálogos", "🙋🏻‍♂️ Chatear con un asesor"]
     
     def __init__(self, _text, _number, _messageId, _name):
         self.text = _text
@@ -15,61 +18,245 @@ class chatbot:
     # Getters y Setters
     def get_text(self):
         return self.text
-    def set_text(self, _text):
-        self.text = _text
     def get_number(self):
         return self.number
-    def set_number(self, _number):
-        self.number = _number
     def get_messageId(self):
         return self.messageId
-    def set_messageId(self, _messageId):
-        self._messageId = _messageId
     def get_name(self):
         return self.name
+    def set_text(self, _text):
+        self.text = _text
+    def set_number(self, _number):
+        self.number = _number
+    def set_messageId(self, _messageId):
+        self._messageId = _messageId
     def set_name(self, _name):
         self.name = _name
 
     def start(self):
-        text = text.lower() #mensaje que envio el usuario
-        list = []
-        print("mensaje del usuario: ",text)
-
+        # #mensaje que envio el usuario
+        # text = self.text.lower() 
+        text = self.text
+        self.list = []
         markRead = funcWhap.markRead_Message(self.messageId)
-        list.append(markRead)
+        
+        self.list.append(markRead)
         time.sleep(2)
 
-
-        if "hola" in text:
-            # self.sendSimpleText("¡Hola! soy SaviBot 😃")
-            body = "¡Hola! 👋 Bienvenido a Savin. ¿Cómo podemos ayudarte hoy?"
-            footer = "Savin Team"
-            options = ["✅ servicios", "📅 agendar cita"]
-
-            replyButtonData = funcWhap.buttonReply_Message(self.number, options, body, footer, "sed1",self.messageId)
-            replyReaction = funcWhap.replyReaction_Message(self.number, self.messageId, "🫡")
-            list.append(replyReaction)
-            list.append(replyButtonData)
+        if "🤖 Empezar" == text or "hola" in text:
+            self.welcome()
+        elif "✅ Menú" == text:
+            self.menu()
+        elif "📅 Horarios" == text:
+            self.attentionSchedule()
+        elif "✅ Sí" == text:
+            self.menu()
+        elif "⛔ No" == text:
+            self.goodbye()
+        # Flujo del menú principal
+        elif "📦 Productos y precios" == text:
+            self.productsAndPrices()
+        elif "🗺️ Dirección" == text:
+            self.address()
+        elif "💰 Promociones y ofertas" == text:
+            self.promotionsAndOffers()
+        elif "📖 Ver catálogos" == text:
+            self.seeCatalogs()
+        elif "🙋🏻‍♂️ Chatear con un asesor" == text:
+            self.chatWithAnAdvisor()
+        # FLUJO DE 📦 PRODUCTOS Y PRECIOS
+        elif text in self.listArea:
+            self.searchForArea()
+        elif "notFound" == text:
+            self.notFound()
+        elif "otherProduct" == text:
+            self.otherProduct()
+        elif "📦 Productos" == text:
+            self.productsAndPrices()
+        elif "📑 Menú" == text:
+            self.menu()
+        
+        # FLUJO DE 🗺️ DIRECCIÓN
+        elif text in self.listCity:
+            self.addressForCity()
             
-        for item in list:
+            
+        else:
+            self.errorMessage()
+
+            
+        for item in self.list:
             funcWhap.enviar_Mensaje_whatsapp(item)
 
-    def bienvenida(self):
-            self.sendSimpleText("¡Hola! soy SaviBot 😃")
-            self.sendSimpleText("Tú asistente virtual")
-            
-            body = "¡Hola! soy SaviBot 😃"
-            footer = "Savin Team"
-            options = ["✅ servicios", "📅 agendar cita"]
+    def welcome(self):
+        self.sendEmojiReactionMessage("🫡")
+        self.sendSimpleText("🤖 ¡Hola "+ self.name +"! Soy SaviBot")
+        self.sendSimpleText("Tú asistente virtual")
+        self.sendTwoOptions("¿Cómo podemos ayudarte hoy? 😃", "✅ Menú", "📅 Horarios")
 
-            replyReaction = funcWhap.replyReaction_Message(self.number, self.messageId, "🫡")
-            replyButtonData = funcWhap.buttonReply_Message(self.number, options, body, footer, "sed1",self.messageId)
-            list.append(replyReaction)
-            list.append(replyButtonData)
+    def menu(self):
+        # options = ["📦 Productos y precios", "🗺️ Dirección", "💰 Promociones y ofertas", "📖 Ver catálogos", "🙋🏻‍♂️ Chatear con un asesor"]
+        self.sendSimpleText("¿En qué puedo ayudarte? 🤔")
+        self.sendMenuOptions("Selecciona una opción 👇🏻", self.listMenu)
+    
+    def attentionSchedule(self):
+        self.sendSimpleText("Nuestros horarios de atención en tiendas son:\n" \
+                    "✅ Lunes a Viernes\n" \
+                    "    ➡ de 8:30am a 12:30pm\n" \
+                    "    ➡ de 2:30pm a 7:00pm\n" \
+                    "✅ Sábados\n" \
+                    "    ➡ de 9:00am a 1:00pm")
+        self.menuPreEnd()
+        
+    def menuPreEnd(self):
+        self.sendTwoOptions("¿Te puedo ayudar con algo más? 🤔", "✅ Sí", "⛔ No")
+    
+    def goodbye(self):
+        self.sendSimpleText("🤖 Ha sido un placer atenderte")
+        self.sendSimpleText("No olvides revisar nuestra página web y nuestros productos aquí 👇🏻")
+        self.sendSimpleText("https://savin.com.bo/")
+        
+    def errorMessage(self):
+        self.sendSimpleText("Lo siento, no entendí lo que dijiste 👀")
+        self.sendSimpleButton("Pulsa aquí para iniciar el asistente virtual 👇🏻", "🤖 Empezar")
+        
+        
+    # FUNCIONES DEL MENÚ PRINCIPAL
+    def productsAndPrices(self):
+        # options = ["🖥️ Impresoras 3D", "🗺️ Fotocopiadoras", "💰 Sublimación", "📖 Cortadora láser", "🙋🏻‍♂️ Computadoras", "Bioseguridad", "Impresoras", "Papel", "Encuadernación", "Plastificado", "Novedades", "Otros"]
+        # options = ["Impresoras 3D", "Fotocopiadoras", "Sublimación", "Cortadora láser", "Computadoras", "Bioseguridad", "Impresoras", "Papel", "Novedades", "Otros"]
+        self.sendMenuOptions("Escoge el área del producto que buscas 👇🏻", self.listArea)
+    
+    def address(self):
+        # options = ["La Paz", "El Alto", "Cochabamba", "Santa Cruz", "Tarija", "Sucre", "Oruro", "Potosí"]
+        self.sendMenuOptions("Excelente, indícame de que ciudad me escribes... 👀", self.listCity)
+        
+    def promotionsAndOffers(self):
+        self.sendSimpleText("Mantente al pendiente de nuestras ofertas 😉")
+        
+    def seeCatalogs(self):
+        # options = ["🖥️ Impresoras 3D", "🗺️ Fotocopiadoras", "💰 Sublimación", "📖 Cortadora láser", "🙋🏻‍♂️ Computadoras", "Bioseguridad", "Impresoras", "Papel", "Encuadernación", "Plastificado", "Novedades", "Otros"]
+        options = ["Impresoras 3D", "Fotocopiadoras", "Sublimación", "Cortadora láser", "Computadoras", "Bioseguridad", "Impresoras", "Papel", "Novedades", "Otros"]
+        self.sendMenuOptions("Excelente, escoge el área del catálogo que quieres ver 👇🏻", options)
+    
+    def chatWithAnAdvisor(self):
+        self.sendSimpleText("Muy bien ¿En qué área necesitas la atención al cliente? 🤔")
+        options = ["🖥️ Impresoras 3D", "🗺️ Máquinas láser", "💰 Computadoras", "📖 Sublimación", "🙋🏻‍♂️ Atención general"]
+        self.sendMenuOptions("Selecciona un área 👇🏻", options)
+        
+    # FUNCIONES DE PRODUCTOS POR ÁREA
+    
+    def searchForArea(self):
+        self.sendSimpleText("¿Qué poducto estás buscando en el área " + self.text + "?")
+    def notFound(self):
+        self.sendSimpleText("Lo siento no encontré el producto " + self.text)
+    def otherProduct(self):
+        self.sendTwoOptions("¿Quieres consultar otro producto? 🤔", "📦 Productos", "📑 Menú")
+        
+    # FUNCIONES DE DIRECCIÓN POR CIUDAD
+    
+    def addressForCity(self):
+        self.sendSimpleText("En "+ self.text +" atendemos en: 👇🏻")
+        
+        if "La Paz" == self.text:
+            address1 = "🏢 Calle Loayza # 349, local 3 (Frente a la facultad de Derecho UMSA)"
+            address1 += "\n📲 72030101"
+            address1 += "\n📌 https://maps.app.goo.gl/tNsAqrArK2NfGnM47"
+
+            address2 = "🏢 Calle Zapata # 141 (frente Monoblock UMSA)"
+            address2 += "\n📲 72030107"
+            address2 += "\n📌 https://maps.app.goo.gl/vnP2W9hk2oJZMSwx5"
+
+            address3 = "🏢 Calle 2 de obrajes entre Av. Hernando Siles y Av. 14 de Septiembre (Frente Universidad Catolica)"
+            address3 += "\n📲 71545171"
+            address3 += "\n📌 https://maps.app.goo.gl/Vvw4BjAnpP6MFnwa8"
+            
+            self.sendSimpleText(address1)
+            self.sendSimpleText(address2)
+            self.sendSimpleText(address3)            
+            
+        elif "El Alto" == self.text:
+            address1 = "🏢 Av. Juan Pablo II Edif. EI Ceibo Local A-15 (Final Autopista casi esq. Rene Dorado)"
+            address1 += "\n📲 72029023"
+            address1 += "\n📌 https://maps.app.goo.gl/vTUrQCpyNQmC24hH6"
+
+            address2 = "🏢 Avenida Satélite # 668 (Cerca al Banco Mercantil Santa Cruz)"
+            address2 += "\n📲 71543980"
+            address2 += "\n📌 https://maps.app.goo.gl/bagfMNGR4GSmpom9A"
+            
+            self.sendSimpleText(address1)
+            self.sendSimpleText(address2)
+        elif "Cochabamba" == self.text:
+            address = "🏢 Calle Sucre # 882 (Casi esquina Oquendo)"
+            phone = "📲 72030102"
+            maps = "📌 https://maps.app.goo.gl/6MfeLnrtaiAk9p6y9"
+            
+            self.sendSimpleText(address)
+            self.sendSimpleText(phone)
+            self.sendSimpleText(maps)
+            
+            self.sendContact(phone)
+            self.sendUrl(maps)
+        elif "Santa Cruz" == self.text:
+            address = "🏢 Avenida Centenario # 113 casi esquina Palermo (entre primer y segundo anillo)"
+            phone = "📲 72030103"
+            maps = "📌 https://maps.app.goo.gl/1xw1r9zfBwv1pQJK6"
+        elif "Tarija" == self.text:
+            address = "🏢 Calle Alejandro del Carpio # 258 entre Suipacha y Méndez (Zona Las Panosas)"
+            phone = "📲 72030105"
+            maps = "📌 https://maps.app.goo.gl/rHxKVwKALUQev44QA"
+        elif "Sucre" == self.text:
+            address = "🏢 Calle Regimiento Campos # 174 Esquina Ricardo Andrade (Frente a la Facultad Técnica)"
+            phone = "📲 72030104"
+            maps = "📌 https://maps.app.goo.gl/bcK8XhSmjCk9daXt7"
+        elif "Oruro" == self.text:
+            address = "🏢 Calle Potosí # 5507 Esquina Montecinos (Diagonal al Col. Juan Misael Saracho)"
+            phone = "📲 72030106"
+            maps = "📌 https://maps.app.goo.gl/5ARt9qRxZoRzadc89"
+        elif "Potosí" == self.text:
+            address = "🏢 Avenida Prado San Clemente # 29 entre las calles Camargo y 13 de Mayo"
+            phone = "📲 68868684"
+            maps = "📌 https://maps.app.goo.gl/mzG5tcuqNpD9NcLDA"
+            
+        
+        
+    # FUNCIONES PARA ENVIAR MENSAJES
+    
     
     def sendSimpleText(self, _message):
         textMessage = funcWhap.text_Message(self.number, _message)
-        funcWhap.enviar_Mensaje_whatsapp(textMessage)
+        self.list.append(textMessage)
+        # funcWhap.enviar_Mensaje_whatsapp(textMessage)
+        
+    def sendMenuOptions(self, message, multipleChoice):
+        body = message
+        options = multipleChoice
+        listReplyData = funcWhap.listReply_Message(self.number, options, body, "", "sed2",self.messageId)
+        self.list.append(listReplyData)
+        
+    def sendTwoOptions(self, message, optionOne, optionTwo):
+        body = message
+        options = [optionOne, optionTwo]
+        replyButtonData = funcWhap.buttonReply_Message(self.number, options, body, "", "sed1", self.messageId)
+        self.list.append(replyButtonData)
+    
+    def sendEmojiReactionMessage(self, emoji):
+        replyReaction = funcWhap.replyReaction_Message(self.number, self.messageId, emoji)
+        self.list.append(replyReaction)
+            
+    def sendSimpleButton(self, message, option):
+        body = message
+        options = [option]
+        replyButtonData = funcWhap.buttonReply_Message(self.number, options, body, "", "sed1", self.messageId)
+        self.list.append(replyButtonData)
+        
+    def sendUrl(self, url):
+        replyData = funcWhap.document_Message(self.number, url, "Listo 👍🏻", "Inteligencia de Negocio.pdf")
+        self.list.append(replyData)
+    
+    def sendContact(self, number):
+        replyData = funcWhap.replyContact_Message(number)
+        self.list.append(replyData)
         
     def start2(self):
         text = text.lower() #mensaje que envio el usuario
@@ -148,5 +335,4 @@ class chatbot:
             data = funcWhap.text_Message(self.number,"Lo siento, no entendí lo que dijiste. ¿Quieres que te ayude con alguna de estas opciones?")
             list.append(data)
 
-        for item in list:
-            funcWhap.enviar_Mensaje_whatsapp(item)
+ 
