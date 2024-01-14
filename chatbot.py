@@ -8,8 +8,10 @@ class ChatBot:
     listCity = ["La Paz", "El Alto", "Cochabamba", "Santa Cruz", "Tarija", "Sucre", "Oruro", "Potosí"]
     listArea = ["Impresoras 3D", "Fotocopiadoras", "Sublimación", "Cortadora láser", "Computadoras", "Bioseguridad", "Impresoras", "Papel", "Novedades", "Otros"]
     listMenu = ["📦 Productos y precios", "🗺️ Dirección", "💰 Promociones y ofertas", "📖 Ver catálogos", "🙋🏻‍♂️ Chatear con un asesor"]
-    listAreaSupport = ["🖥️ Impresoras 3D", "🗺️ Máquinas láser", "💰 Computadoras", "📖 Sublimación", "🙋🏻‍♂️ Atención general"]
-    
+    listAreaSupport = ["🙋🏻‍♂️ Impresoras 3D", "🙋🏻‍♂️ Máquinas láser", "🙋🏻‍♂️ Computadoras", "🙋🏻‍♂️ Sublimación", "🙋🏻‍♂️ Atención general"]
+    listCitySupport = ["➡️ La Paz", "➡️ El Alto", "➡️ Cochabamba", "➡️ Santa Cruz", "➡️ Tarija", "➡️ Sucre", "➡️ Oruro", "➡️ Potosí"]
+    listAreaCatalog = ["📰 Impresoras 3D", "📰 Fotocopiadoras", "📰 Sublimación", "📰 Cortadora láser", "📰 Computadoras", "📰 Bioseguridad", "📰 Impresoras", "📰 Papel", "📰 Novedades", "📰 Otros"]
+
     
     def __init__(self, _text, _number, _messageId, _name):
         self.text = _text
@@ -45,8 +47,10 @@ class ChatBot:
         self.list.append(markRead)
         time.sleep(2)
 
-        if "🤖 Empezar" == text or "hola" in text:
-            self.welcome()
+        if "🤖 Empezar" == text:
+            self.welcome("🫡")
+        elif "Hola" in text:
+            self.welcome("👋🏻")
         elif "✅ Menú" == text:
             self.menu()
         elif "📅 Horarios" == text:
@@ -67,12 +71,11 @@ class ChatBot:
         elif "🙋🏻‍♂️ Chatear con un asesor" == text:
             self.chatWithAnAdvisor()
         # FLUJO DE 📦 PRODUCTOS Y PRECIOS
+        # el flujo se manda automáticamente a error para integrar la IA más adelante
         elif text in self.listArea:
-            self.searchForArea()
-        elif "notFound" == text:
+            self.searchForArea()  
+        # elif "notFound" == text:
             self.notFound()
-        elif "otherProduct" == text:
-            self.otherProduct()
         elif "📦 Productos" == text:
             self.productsAndPrices()
         elif "📑 Menú" == text:
@@ -81,13 +84,16 @@ class ChatBot:
         # FLUJO DE 🗺️ DIRECCIÓN
         elif text in self.listCity:
             self.addressForCity()
-        
         # FLUJO DE 💰 Promociones y ofertas
-        
+
         # FLUJO DE 📖 Ver catálogos
-        
+        elif text in self.listAreaCatalog:
+            self.catalog()
         # FLUJO DE 🙋🏻‍♂️ Chatear con un asesor
-        
+        elif text in self.listAreaSupport:
+            self.customerSupport()
+        elif text in self.listCitySupport:
+            self.customerSupportByCity()
         
         else:
             self.errorMessage()
@@ -96,8 +102,8 @@ class ChatBot:
         for item in self.list:
             funcWhap.enviar_Mensaje_whatsapp(item)
 
-    def welcome(self):
-        self.sendEmojiReactionMessage("🫡")
+    def welcome(self, emoji):
+        self.sendEmojiReactionMessage(emoji)
         self.sendSimpleText("🤖 ¡Hola "+ self.name +"! Soy SaviBot")
         self.sendSimpleText("Tú asistente virtual")
         self.sendTwoOptions("¿Cómo podemos ayudarte hoy? 😃", "✅ Menú", "📅 Horarios")
@@ -128,6 +134,9 @@ class ChatBot:
         self.sendSimpleText("Lo siento, no entendí lo que dijiste 👀")
         self.sendSimpleButton("Pulsa aquí para iniciar el asistente virtual 👇🏻", "🤖 Empezar")
         
+    def buildArea(self):
+        self.sendEmojiReactionMessage("🛠️")
+        self.sendSimpleText("Lo siento, esta área esta en construcción 🛠️")
         
     # FUNCIONES DEL MENÚ PRINCIPAL
     def productsAndPrices(self):
@@ -141,11 +150,12 @@ class ChatBot:
         
     def promotionsAndOffers(self):
         self.sendSimpleText("Mantente al pendiente de nuestras ofertas 😉")
+        self.menuPreEnd()
         
     def seeCatalogs(self):
         # options = ["🖥️ Impresoras 3D", "🗺️ Fotocopiadoras", "💰 Sublimación", "📖 Cortadora láser", "🙋🏻‍♂️ Computadoras", "Bioseguridad", "Impresoras", "Papel", "Encuadernación", "Plastificado", "Novedades", "Otros"]
-        options = ["Impresoras 3D", "Fotocopiadoras", "Sublimación", "Cortadora láser", "Computadoras", "Bioseguridad", "Impresoras", "Papel", "Novedades", "Otros"]
-        self.sendMenuOptions("Excelente, escoge el área del catálogo que quieres ver 👇🏻", options)
+        # options = ["Impresoras 3D", "Fotocopiadoras", "Sublimación", "Cortadora láser", "Computadoras", "Bioseguridad", "Impresoras", "Papel", "Novedades", "Otros"]
+        self.sendMenuOptions("Excelente, escoge el área del catálogo que quieres ver 👇🏻", self.listAreaCatalog)
     
     def chatWithAnAdvisor(self):
         self.sendSimpleText("Muy bien ¿En qué área necesitas la atención al cliente? 🤔")
@@ -154,9 +164,12 @@ class ChatBot:
     # FUNCIONES DE PRODUCTOS POR ÁREA
     
     def searchForArea(self):
-        self.sendSimpleText("¿Qué poducto estás buscando en el área " + self.text + "?")
+        self.sendSimpleText("¿Qué producto estás buscando en el área " + self.text + "?")
     def notFound(self):
         self.sendSimpleText("Lo siento no encontré el producto " + self.text)
+        self.buildArea()
+        self.otherProduct()
+        
     def otherProduct(self):
         self.sendTwoOptions("¿Quieres consultar otro producto? 🤔", "📦 Productos", "📑 Menú")
         
@@ -232,6 +245,63 @@ class ChatBot:
         
         self.menuPreEnd()
 
+
+    # FUNCIONES PARA VER LOS CATÁLOGOS
+    def catalog(self):
+        self.buildArea()
+        self.menuPreEnd()
+    
+
+
+    # FUNCIONES DE ATECIÓN AL CLIENTE
+    def customerSupport(self):
+        if self.text == "🙋🏻‍♂️ Impresoras 3D" or type == "🙋🏻‍♂️ Máquinas láser":
+            adviser = "Nuestro asesor Rodri te atenderá con gusto 😊"
+            phone = "📲 68068883"
+            self.sendSimpleText(adviser)
+            self.sendSimpleText(phone)
+            
+            self.menuPreEnd()
+        elif self.text == "🙋🏻‍♂️ Computadoras":
+            adviser = "Nuestro asesor Iván te atenderá con gusto 😊"
+            phone = "📲 74040348"
+            self.sendSimpleText(adviser)
+            self.sendSimpleText(phone)
+            
+            self.menuPreEnd()
+        elif self.text == "🙋🏻‍♂️ Sublimación":
+            adviser = "Nuestra asesora Mafer te atenderá con gusto 😊"
+            phone = "📲 72507000"
+            self.sendSimpleText(adviser)
+            self.sendSimpleText(phone)
+            
+            self.menuPreEnd()
+        elif self.text == "🙋🏻‍♂️ Atención general":
+            self.sendMenuOptions("Bien, indícame de que ciudad me escribes... 👀", self.listCitySupport)
+        
+    def customerSupportByCity(self):
+        
+        if self.text == "➡️ La Paz":
+            phone = "📲 72030101 'Loayza' \n📲 72030107 'Zapata' \n📲 71545171 'Obrajes' "
+        elif self.text == "➡️ El Alto":
+            phone = "📲 72029023 'Ceibo' \n📲 71543980 'Satélite' "
+        elif self.text == "➡️ Cochabamba":
+            phone = "📲 72030102"
+        elif self.text == "➡️ Santa Cruz":
+            phone = "📲 72030103"
+        elif self.text == "➡️ Tarija":
+            phone = "📲 72030105"
+        elif self.text == "➡️ Sucre":
+            phone = "📲 72030104"
+        elif self.text == "➡️ Oruro":
+            phone = "📲 72030106"
+        elif self.text == "➡️ Potosí":
+            phone = "📲 68868684"
+        
+        self.sendSimpleText("Nuestro asesor en la tienda de " + self.text + " te atenderá con gusto. 😊")
+        self.sendSimpleText(phone)
+        
+        self.menuPreEnd()
         
     # FUNCIONES PARA ENVIAR MENSAJES
     
