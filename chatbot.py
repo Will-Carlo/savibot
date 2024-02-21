@@ -49,7 +49,7 @@ class ChatBot:
 
         if "🤖 Empezar" == text:
             self.welcome("🫡")
-        elif "Hola" in text:
+        elif "Hola" in text or "buen" in text or "Buen" in text:
             self.welcome("👋🏻")
         elif "✅ Menú" == text:
             self.menu()
