@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 # Whatsapp Bot con Python
 
@@ -93,3 +94,7 @@ en body, seleccionar "raw" y tipo "JSON", no olvidar agregar tu número
 }
 ```
 
+=======
+# savibot
+Whatsapp API with Bot in Python
+>>>>>>> cfa021280991f417ea532b37f0aba1da8eb464b7
